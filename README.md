@@ -1,7 +1,13 @@
-# Terra Spacecamp 2021 Workshop: How to Do Integration Tests
+# Workshop: How to do integration tests
 
 <table>
 <tbody>
+  <tr>
+    <td>event</td>
+    <td>
+      <a href="https://eventornado.com/event/terra-spacecamp#home" target="_blank" rel="noopener noreferrer">Terra Spacecamp 2021</a>
+    </td>
+  </tr>
   <tr>
     <td>time</td>
     <td>TBD</td>
