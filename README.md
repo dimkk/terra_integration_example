@@ -69,7 +69,7 @@ cd LocalTerra
 git checkout v0.5.0  # important
 ```
 
-Edit `LocalTerra/config/app.toml` as follows. This speeds up LocalTerra's blocktime which improves our productivity.
+Edit `LocalTerra/config/config.toml` as follows. This speeds up LocalTerra's blocktime which improves our productivity.
 
 ```diff
 ##### consensus configuration options #####
@@ -161,7 +161,7 @@ workspace-optimizer
 ```bash
 cd terra-spacecamp-2021-workshop/scripts
 npm install
-ts-node test.ts
+ts-node main.ts
 ```
 
 ## Acknowledgement
