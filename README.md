@@ -32,16 +32,16 @@
     <td><a href="https://larry.engineer/" target="_blank" rel="noopener noreferrer">larry.engineer</a></td>
   </tr>
   <tr>
+    <td>github</td>
+    <td><a href="https://github.com/larry0x" target="_blank" rel="noopener noreferrer">@larry0x</a></td>
+  </tr>
+  <tr>
     <td>twitter</td>
     <td><a href="https://twitter.com/larry0x" target="_blank" rel="noopener noreferrer">@larry0x</a></td>
   </tr>
   <tr>
     <td>telegram</td>
     <td><a href="https://t.me/larry_0x" target="_blank" rel="noopener noreferrer">@larry_0x</a></td>
-  </tr>
-  <tr>
-    <td>github</td>
-    <td><a href="https://github.com/0xlarry" target="_blank" rel="noopener noreferrer">@0xlarry</a></td>
   </tr>
 </tbody>
 </table>
