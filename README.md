@@ -146,7 +146,7 @@ alias workspace-optimizer='docker run --rm -v "$(pwd)":/code \
 ```
 
 ```bash
-git clone https://github.com/0xlarry/terra-spacecamp-2021-workshop.git
+git clone https://github.com/larry0x/spacecamp-2021-workshop.git
 cd terra-spacecamp-2021-workshop
 
 # if your project contains only 1 contract
