@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import chalk from "chalk";
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
@@ -173,11 +174,17 @@ async function testProvideLiquidity() {
 // pool uusd  420000000 - 5981999 = 414018001
 // user uLP   170235131
 // user uMIR  10000000000 - 1000000 = 9999000000
-// user uusd  10000000000000000 + 5976023 - 4500000 = 10000000001476023
+// user uusd  balanceBeforeSwap + 5976023 - 4500000 (gas)
 //----------------------------------------------------------------------------------------
 
 async function testSwap() {
   process.stdout.write("Should swap... ");
+
+  const userUusdBefore = await queryNativeTokenBalance(
+    terra,
+    user2.key.accAddress,
+    "uusd"
+  );
 
   await sendTransaction(terra, user2, [
     new MsgExecuteContract(user2.key.accAddress, mirrorToken, {
@@ -203,8 +210,13 @@ async function testSwap() {
   const userUMir = await queryTokenBalance(terra, user2.key.accAddress, mirrorToken);
   expect(userUMir).to.equal("9999000000");
 
+  const userUusdExpected = new BN(userUusdBefore)
+    .add(new BN("5976023"))
+    .sub(new BN("4500000"))
+    .toString();
+
   const userUUsd = await queryNativeTokenBalance(terra, user2.key.accAddress, "uusd");
-  expect(userUUsd).to.equal("10000000001476023");
+  expect(userUUsd).to.equal(userUusdExpected);
 
   console.log(chalk.green("Passed!"));
 }
