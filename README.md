@@ -10,11 +10,11 @@
   </tr>
   <tr>
     <td>time</td>
-    <td>TBD</td>
+    <td>Aug 24 2021 7:00 pm EST</td>
   </tr>
   <tr>
     <td>livestream</td>
-    <td>TBD</td>
+    <td>https://www.youtube.com/watch?v=hU5HWCL7WWc</td>
   </tr>
 </tbody>
 </table>
