@@ -84,14 +84,14 @@ export async function instantiateContract(
   deployer: Wallet,
   admin: Wallet, // leave this emtpy then contract is not migratable
   codeId: number,
-  initMsg: object
+  instantiateMsg: object
 ) {
   const result = await sendTransaction(terra, deployer, [
     new MsgInstantiateContract(
       deployer.key.accAddress,
       admin.key.accAddress,
       codeId,
-      initMsg
+      instantiateMsg
     ),
   ]);
   return result;
