@@ -1,14 +1,16 @@
+import * as path from "path";
 import BN from "bn.js";
 import chalk from "chalk";
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import { LocalTerra, MsgExecuteContract } from "@terra-money/terra.js";
-import { deployTerraswapPair, deployTerraswapToken } from "./fixture";
 import {
+  toEncodedBinary,
+  sendTransaction,
+  storeCode,
+  instantiateContract,
   queryNativeTokenBalance,
   queryTokenBalance,
-  sendTransaction,
-  toEncodedBinary,
 } from "./helpers";
 
 chai.use(chaiAsPromised);
@@ -32,19 +34,53 @@ let terraswapLpToken: string;
 //----------------------------------------------------------------------------------------
 
 async function setupTest() {
-  let { cw20CodeId, cw20Token } = await deployTerraswapToken(
+  // Step 1. Upload TerraSwap Token code
+  process.stdout.write("Uploading TerraSwap Token code... ");
+
+  const cw20CodeId = await storeCode(
     terra,
     deployer,
-    "Mock Mirror Token",
-    "MIR"
+    path.resolve(__dirname, "../artifacts/terraswap_token.wasm")
   );
-  mirrorToken = cw20Token;
 
-  ({ terraswapPair, terraswapLpToken } = await deployTerraswapPair(terra, deployer, {
+  console.log(chalk.green("Done!"), `${chalk.blue("codeId")}=${cw20CodeId}`);
+
+  // Step 2. Instantiate TerraSwap Token contract
+  process.stdout.write("Instantiating TerraSwap Token contract... ");
+
+  const tokenResult = await instantiateContract(terra, deployer, deployer, cw20CodeId, {
+    name: "Mock Mirror Token",
+    symbol: "MIR",
+    decimals: 6,
+    initial_balances: [],
+    mint: {
+      minter: deployer.key.accAddress,
+    },
+  });
+
+  mirrorToken = tokenResult.logs[0].events[0].attributes[3].value;
+
+  console.log(chalk.green("Done!"), `${chalk.blue("contractAddress")}=${mirrorToken}`);
+
+  // Step 3. Upload TerraSwap Pair code
+  process.stdout.write("Uploading TerraSwap pair code... ");
+
+  const codeId = await storeCode(
+    terra,
+    deployer,
+    path.resolve(__dirname, "../artifacts/terraswap_pair.wasm")
+  );
+
+  console.log(chalk.green("Done!"), `${chalk.blue("codeId")}=${codeId}`);
+
+  // Step 4. Instantiate TerraSwap Pair contract
+  process.stdout.write("Instantiating TerraSwap pair contract... ");
+
+  const pairResult = await instantiateContract(terra, deployer, deployer, codeId, {
     asset_infos: [
       {
         token: {
-          contract_addr: cw20Token,
+          contract_addr: mirrorToken,
         },
       },
       {
@@ -54,12 +90,26 @@ async function setupTest() {
       },
     ],
     token_code_id: cw20CodeId,
-  }));
+  });
 
+  const event = pairResult.logs[0].events.find((event) => {
+    return event.type == "instantiate_contract";
+  });
+
+  terraswapPair = event?.attributes[3].value as string;
+  terraswapLpToken = event?.attributes[7].value as string;
+
+  console.log(
+    chalk.green("Done!"),
+    `${chalk.blue("terraswapPair")}=${terraswapPair}`,
+    `${chalk.blue("terraswapLpToken")}=${terraswapLpToken}`
+  );
+
+  // Step 5. Mint tokens for use in testing
   process.stdout.write("Fund user 1 with MIR... ");
 
   await sendTransaction(terra, deployer, [
-    new MsgExecuteContract(deployer.key.accAddress, cw20Token, {
+    new MsgExecuteContract(deployer.key.accAddress, mirrorToken, {
       mint: {
         recipient: user1.key.accAddress,
         amount: "10000000000",
@@ -72,7 +122,7 @@ async function setupTest() {
   process.stdout.write("Fund user 2 with MIR... ");
 
   await sendTransaction(terra, deployer, [
-    new MsgExecuteContract(deployer.key.accAddress, cw20Token, {
+    new MsgExecuteContract(deployer.key.accAddress, mirrorToken, {
       mint: {
         recipient: user2.key.accAddress,
         amount: "10000000000",
