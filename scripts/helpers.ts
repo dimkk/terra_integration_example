@@ -135,7 +135,7 @@ export async function queryTokenBalance(
  * @dev Assumes transferring UST. Transferring LUNA does not incur tax.
  */
 export function deductTax(amount: number) {
-  const DECIMAL_FRACTION = new BN("1_000_000_000_000_000_000");
+  const DECIMAL_FRACTION = new BN("1000000000000000000");
   const tax = Math.min(
     amount -
       new BN(amount)
