@@ -8,7 +8,7 @@ import {
   Msg,
   MsgInstantiateContract,
   MsgStoreCode,
-  StdFee,
+  Fee,
   Wallet,
   LCDClient,
 } from "@terra-money/terra.js";
@@ -31,7 +31,7 @@ export async function sendTransaction(
 ) {
   const tx = await sender.createAndSignTx({
     msgs,
-    fee: new StdFee(30000000, [new Coin("uluna", 4500000), new Coin("uusd", 4500000)]),
+    fee: new Fee(30000000, [new Coin("uluna", 4500000), new Coin("uusd", 4500000)]),
   });
 
   const result = await terra.tx.broadcast(tx);
@@ -105,7 +105,8 @@ export async function queryNativeTokenBalance(
   account: string,
   denom: string = "uusd"
 ) {
-  const balance = (await terra.bank.balance(account)).get(denom)?.amount.toString();
+  const [coins] = await terra.bank.balance(account);
+  const balance = coins.get(denom)?.amount.toString();
   if (balance) {
     return balance;
   } else {
